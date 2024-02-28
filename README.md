@@ -3,7 +3,7 @@
 
 A widget that makes underlying Text.rich or RichText animate like a typewriter.
 
-![Preview](rich_typewriter_preview.webp)
+![Preview](https://github.com/peaashmeter/rich_typewriter/blob/3e3fe2fb1996fc0bbe8e4d83fbffea354a696538/rich_typewriter_preview.webp)
 
 ## Motivation
 I was creating a [visual novel engine](https://pub.dev/packages/npdart),
