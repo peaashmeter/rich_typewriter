@@ -3,8 +3,9 @@ description: "A widget that makes underlying Text.rich or RichText animate like 
 version: 1.0.0
 repository: "https://github.com/peaashmeter/rich_typewriter"
 screenshots:
-  path: "rich_typewriter_preview.webp"
-  description: "An example of rich_typewriter usage."
+  - description: "An example of rich_typewriter usage."
+    path: "rich_typewriter_preview.webp"
+  
 
 environment:
   sdk: ^3.0.0
