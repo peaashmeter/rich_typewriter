@@ -1,6 +1,8 @@
 
+# rich_typewriter
 
 A widget that makes underlying Text.rich or RichText animate like a typewriter.
+
 ![Preview](rich_typewriter_preview.webp)
 
 ## Motivation
