@@ -4,3 +4,7 @@
 - Supports trees of InlineSpan with arbitrary depth.
 - Can print both text characters and widgets.
 - Allows to set up different delays for different symbols.
+
+## 1.0.1
+
+- Updated package readme.
