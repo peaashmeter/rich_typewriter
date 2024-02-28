@@ -8,7 +8,7 @@ A widget that makes underlying Text.rich or RichText animate like a typewriter.
 ## Motivation
 I was creating a [visual novel engine](https://pub.dev/packages/npdart),
 so I needed a convenient way to animate RichTexts (with styles and WidgetSpans).
-Actually there *are* some packages which do the thing, but they do not work with existant
+Actually there *are* some packages which do the thing, but they do not work with existent
 RichTexts and/or do not support WidgetSpans.
 
 In addition, it's also a kind of proof of concept in terms of interaction with the element tree. 
