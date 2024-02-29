@@ -63,11 +63,26 @@ class _RichTypewriterElement extends ProxyElement {
     _animate(_animatable!, _originalWidget!);
   }
 
+  @override
+  void reassemble() {
+    super.reassemble();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animatable = _findAnimatable();
+      assert(
+        _animatable!.widget is RichText,
+      );
+      _originalWidget = _animatable!.widget as RichText;
+
+      _animate(_animatable!, _originalWidget!);
+    });
+  }
+
   ///Animates a [RichText].
   ///
   ///Essentially, a widget is just a configuration for some [Element].
   ///This sequentially updates [el] from scratch until its configuration
-  ///looks as [reference].
+  ///is [reference].
   Future<void> _animate(Element el, RichText reference) async {
     final spans = [reference.text];
 
@@ -81,20 +96,25 @@ class _RichTypewriterElement extends ProxyElement {
 
     List<InlineSpan> displayed = [];
 
-    for (final span in _iterateSpans(spans)) {
-      displayed.add(span);
-      final newRichText = RichText(
-          key: reference.key, text: TextSpan(children: List.from(displayed)));
-
+    update(RichText newRichText) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         WidgetsBinding.instance.buildOwner?.lockState(() {
           el.update(newRichText);
         });
       });
       WidgetsBinding.instance.scheduleFrame();
-      await Future.delayed(_getNextDelay(span));
-      if (!el.mounted) break;
     }
+
+    for (final span in _iterateSpans(spans)) {
+      displayed.add(span);
+      final newRichText = RichText(
+          key: reference.key, text: TextSpan(children: List.from(displayed)));
+      update(newRichText);
+
+      await Future.delayed(_getNextDelay(span));
+    }
+
+    update(reference);
   }
 
   InlineSpan _cloneSpanWithParentStyle(
