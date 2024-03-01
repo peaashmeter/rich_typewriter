@@ -16,6 +16,7 @@ class RichTypewriterExample extends StatelessWidget {
             body: RichTypewriter(
                 symbolDelay: (symbol) =>
                     switch (symbol) { TextSpan(text: ' ') => 200, _ => 100 },
+                onCompleted: () => print('Finished typewriting.'),
                 child: const Center(
                     child: Text.rich(TextSpan(
                         style: TextStyle(
