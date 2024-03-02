@@ -3,7 +3,7 @@
 
 A widget that makes underlying Text.rich or RichText animate like a typewriter.
 
-![Preview](https://github.com/peaashmeter/rich_typewriter/blob/3e3fe2fb1996fc0bbe8e4d83fbffea354a696538/rich_typewriter_preview.webp)
+![Preview](https://raw.githubusercontent.com/peaashmeter/rich_typewriter/3e3fe2fb1996fc0bbe8e4d83fbffea354a696538/rich_typewriter_preview.webp)
 
 ## Motivation
 I was creating a [visual novel engine](https://pub.dev/packages/npdart),
@@ -19,11 +19,7 @@ In addition, it's also a kind of proof of concept in terms of interaction with t
 - Supports trees of InlineSpan with arbitrary depth.
 - Can print both text characters and widgets.
 - Allows to set up different delays for different symbols.
-
-## Limitations
-
-- Does not currently support hot reload to see changes. Use hot restart instead.
-- - Hot reload only restarts the animation.
+- Allows to call a function when the animation ends.
 
 ## Usage
 
