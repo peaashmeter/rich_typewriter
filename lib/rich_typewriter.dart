@@ -111,6 +111,8 @@ class _RichTypewriterElement extends ProxyElement {
     }
 
     for (final span in _iterateSpans(spans)) {
+      if (!mounted) return;
+
       displayed.add(span);
       final newRichText = RichText(
           key: reference.key, text: TextSpan(children: List.from(displayed)));
@@ -119,6 +121,7 @@ class _RichTypewriterElement extends ProxyElement {
       await Future.delayed(_getNextDelay(span));
     }
 
+    if (!mounted) return;
     update(reference);
   }
 
