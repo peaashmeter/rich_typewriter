@@ -17,19 +17,24 @@ class RichTypewriter extends ProxyWidget {
   ///The [symbol] is a minimum printable element of given text,
   ///i.e. an [InlineSpan] with exactly one character, or a [WidgetSpan].
   final int Function(InlineSpan symbol)? symbolDelay;
-  const RichTypewriter({
-    super.key,
-    required super.child,
-    this.delay,
-    this.symbolDelay,
-  }) : assert(
+
+  ///A callback to call when the animation is finished.
+  final Function()? onCompleted;
+
+  const RichTypewriter(
+      {super.key,
+      required super.child,
+      this.delay,
+      this.symbolDelay,
+      this.onCompleted})
+      : assert(
             (delay == null && symbolDelay != null) ||
                 (delay != null && symbolDelay == null),
             "Either this.delay or this.symbolDelay must be defined.");
 
   @override
-  Element createElement() =>
-      _RichTypewriterElement(this, delay: delay, symbolDelay: symbolDelay);
+  Element createElement() => _RichTypewriterElement(this,
+      delay: delay, symbolDelay: symbolDelay, onCompleted: onCompleted);
 }
 
 class _RichTypewriterElement extends ProxyElement {
@@ -42,8 +47,10 @@ class _RichTypewriterElement extends ProxyElement {
 
   final int? delay;
   final int Function(InlineSpan symbol)? symbolDelay;
+  final Function()? onCompleted;
 
-  _RichTypewriterElement(widget, {this.delay, this.symbolDelay})
+  _RichTypewriterElement(widget,
+      {this.delay, this.symbolDelay, this.onCompleted})
       : super(widget);
 
   @override
@@ -55,19 +62,32 @@ class _RichTypewriterElement extends ProxyElement {
       _animatable!.widget is RichText,
     );
     _originalWidget ??= _animatable!.widget as RichText;
-    _animate(_animatable!, _originalWidget!);
+    _animate(_animatable!, _originalWidget!).then((_) => onCompleted?.call());
   }
 
   @override
   void notifyClients(covariant ProxyWidget oldWidget) {
-    _animate(_animatable!, _originalWidget!);
+    _animate(_animatable!, _originalWidget!).then((_) => onCompleted?.call());
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animatable = _findAnimatable();
+      assert(
+        _animatable!.widget is RichText,
+      );
+      _originalWidget = _animatable!.widget as RichText;
+    });
   }
 
   ///Animates a [RichText].
   ///
   ///Essentially, a widget is just a configuration for some [Element].
   ///This sequentially updates [el] from scratch until its configuration
-  ///looks as [reference].
+  ///is [reference].
   Future<void> _animate(Element el, RichText reference) async {
     final spans = [reference.text];
 
@@ -81,20 +101,25 @@ class _RichTypewriterElement extends ProxyElement {
 
     List<InlineSpan> displayed = [];
 
+    update(RichText newRichText) {
+      WidgetsBinding.instance.buildOwner?.lockState(() {
+        el.update(newRichText);
+      });
+    }
+
     for (final span in _iterateSpans(spans)) {
+      if (!mounted) return;
+
       displayed.add(span);
       final newRichText = RichText(
           key: reference.key, text: TextSpan(children: List.from(displayed)));
+      update(newRichText);
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        WidgetsBinding.instance.buildOwner?.lockState(() {
-          el.update(newRichText);
-        });
-      });
-      WidgetsBinding.instance.scheduleFrame();
       await Future.delayed(_getNextDelay(span));
-      if (!el.mounted) break;
     }
+
+    if (!mounted) return;
+    update(reference);
   }
 
   InlineSpan _cloneSpanWithParentStyle(
