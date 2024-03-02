@@ -102,12 +102,9 @@ class _RichTypewriterElement extends ProxyElement {
     List<InlineSpan> displayed = [];
 
     update(RichText newRichText) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        WidgetsBinding.instance.buildOwner?.lockState(() {
-          el.update(newRichText);
-        });
+      WidgetsBinding.instance.buildOwner?.lockState(() {
+        el.update(newRichText);
       });
-      WidgetsBinding.instance.scheduleFrame();
     }
 
     for (final span in _iterateSpans(spans)) {
